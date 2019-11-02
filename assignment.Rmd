@@ -33,3 +33,24 @@ Complete the following steps:
 
 
 
+```{r}
+# start with a color vector
+# red and blue with partial transparency
+colorV <- c("#FF000055", "#00339999");
+
+# Show the output of rgb2col
+# make sure to include alpha=TRUE to maintain alpha transparency
+col2rgb(colorV, alpha=TRUE);
+
+# confirm we can convert from RGB back to the same colors
+rgb2col(col2rgb(colorV, alpha=TRUE));
+```
+
+```{r}
+haze <- plotPals("haze")
+col2rgb(haze)
+col2hsl(haze)
+
+??plotPals
+```
+
