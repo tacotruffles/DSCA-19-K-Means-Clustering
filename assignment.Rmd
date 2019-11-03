@@ -28,29 +28,62 @@ Complete the following steps:
   - Decide on an appropriate value of K ... via trial and error
   - Visualize your results in a plot
 ```{r}
-
-```
-
-
-
-```{r}
-# start with a color vector
-# red and blue with partial transparency
-colorV <- c("#FF000055", "#00339999");
-
-# Show the output of rgb2col
-# make sure to include alpha=TRUE to maintain alpha transparency
-col2rgb(colorV, alpha=TRUE);
-
-# confirm we can convert from RGB back to the same colors
-rgb2col(col2rgb(colorV, alpha=TRUE));
+# Scale data
+scaled_func = preProcess(dat, method = c("scale"))
+scaled_dat = predict(scaled_func, dat)
+scaled_dat
 ```
 
 ```{r}
-haze <- plotPals("haze")
-col2rgb(haze)
-col2hsl(haze)
+# Check that scaling worked on a couple colums - SD should be 1.
+scaled_dat %>%
+  summarize(
+    mean_mpg = mean(weight),
+    sd_mpg = sd(weight),
+    mean_cylinders = mean(acceleration),
+    sd_cylinders = sd(acceleration))
+```
 
-??plotPals
+```{r}
+# Check distributions for a couple columns
+sd1 = scaled_dat %>%
+  ggplot(aes(x = weight)) +
+  geom_density()
+
+sd2 = scaled_dat %>%
+  ggplot(aes(x = acceleration)) +
+  geom_density()
+
+gridExtra::grid.arrange(sd1, sd2)
+```
+
+
+```{r}
+# Use k-means to find clusters in scaled raw_data
+result1 = kmeans(scaled_dat, 2)
+p1 = scaled_dat %>%
+  mutate(cluster = result1$cluster) %>%
+  ggplot(aes(x = weight, y = acceleration, col = as.factor(cluster))) + 
+  geom_point()
+
+result2 = kmeans(scaled_dat, 3)
+p2 = scaled_dat %>%
+  mutate(cluster = result2$cluster) %>%
+  ggplot(aes(x = weight, y = acceleration, col = as.factor(cluster))) + 
+  geom_point()
+
+result3 = kmeans(scaled_dat, 4)
+p3 = scaled_dat %>%
+  mutate(cluster = result3$cluster) %>%
+  ggplot(aes(x = weight, y = acceleration, col = as.factor(cluster))) + 
+  geom_point()
+
+result4 = kmeans(scaled_dat, 5)
+p4 = scaled_dat %>%
+  mutate(cluster = result4$cluster) %>%
+  ggplot(aes(x = weight, y = acceleration, col = as.factor(cluster))) + 
+  geom_point()
+
+gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2)
 ```
 
